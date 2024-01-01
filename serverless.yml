@@ -3,19 +3,37 @@ service: replicate-s3
 frameworkVersion: '3'
 
 custom:
-  defaultStage: dev	
+  defaultStage: dev 
 
 provider:
   name: aws
   runtime: python3.11
   stage: ${opt:stage, self:custom.defaultStage}
   region: ap-northeast-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+        - "s3:GetObject"
+        - "s3:PutObject"
+        - "s3:DeleteObject"
+      Resource:
+        - "arn:aws:s3:::${ssm:SOURCE_BUCKET}/*"
+        - "arn:aws:s3:::${ssm:DESTINATION_BUCKET}/*"
+  environment:
+    SOURCE_BUCKET: ${ssm:SOURCE_BUCKET}
+    DESTINATION_BUCKET: ${ssm:DESTINATION_BUCKET}
 
 package:
   patterns:
     - '!**/**'
     - resources/**
+    - functions/**
 
+functions:
+  replicate-s3:
+    name: replicate-s3-${self:provider.stage}
+    handler: replicate-s3.lambda_handler
 
 resources:
   - ${file(resources/s3.yml)}
