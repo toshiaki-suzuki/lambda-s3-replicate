@@ -14,6 +14,11 @@ provider:
     - Effect: "Allow"
       Action:
         - "s3:ListBucket"
+      Resource:
+        - "arn:aws:s3:::${ssm:SOURCE_BUCKET}"
+        - "arn:aws:s3:::${ssm:DESTINATION_BUCKET}"
+    - Effect: "Allow"
+      Action:
         - "s3:GetObject"
         - "s3:PutObject"
         - "s3:DeleteObject"
@@ -33,7 +38,7 @@ package:
 functions:
   replicate-s3:
     name: replicate-s3-${self:provider.stage}
-    handler: replicate-s3.lambda_handler
+    handler: functions.replicate-s3.lambda_handler
 
 resources:
   - ${file(resources/s3.yml)}
