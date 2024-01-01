@@ -1,0 +1,18 @@
+service: replicate-s3
+
+frameworkVersion: '3'
+
+custom:
+  defaultStage: dev	
+
+provider:
+  name: aws
+  runtime: python3.11
+  stage: ${opt:stage, self:custom.defaultStage}
+  region: ap-northeast-1
+
+package:
+  patterns:
+    - '!**/**'
+    - resources/**
+
