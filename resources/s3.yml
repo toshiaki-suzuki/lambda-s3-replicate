@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: S3 buckets for source and destination
+
+Resources:
+  SourceBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${ssm:SOURCE_BUCKET}
+
+  DestinationBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${ssm:DESTINATION_BUCKET}
+
+Outputs:
+  SourceBucketName:
+    Description: Name of the source S3 bucket
+    Value: !Ref SourceBucket
+
+  DestinationBucketName:
+    Description: Name of the destination S3 bucket
+    Value: !Ref DestinationBucket

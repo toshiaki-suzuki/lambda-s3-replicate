@@ -16,3 +16,6 @@ package:
     - '!**/**'
     - resources/**
 
+
+resources:
+  - ${file(resources/s3.yml)}
