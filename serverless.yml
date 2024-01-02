@@ -11,20 +11,20 @@ provider:
   stage: ${opt:stage, self:custom.defaultStage}
   region: ap-northeast-1
   iamRoleStatements:
-    - Effect: "Allow"
+    - Effect: Allow
       Action:
-        - "s3:ListBucket"
+        - s3:ListBucket
       Resource:
-        - "arn:aws:s3:::${ssm:SOURCE_BUCKET}"
-        - "arn:aws:s3:::${ssm:DESTINATION_BUCKET}"
-    - Effect: "Allow"
+        - arn:aws:s3:::${ssm:SOURCE_BUCKET}
+        - arn:aws:s3:::${ssm:DESTINATION_BUCKET}
+    - Effect: Allow
       Action:
-        - "s3:GetObject"
-        - "s3:PutObject"
-        - "s3:DeleteObject"
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
       Resource:
-        - "arn:aws:s3:::${ssm:SOURCE_BUCKET}/*"
-        - "arn:aws:s3:::${ssm:DESTINATION_BUCKET}/*"
+        - arn:aws:s3:::${ssm:SOURCE_BUCKET}/*
+        - arn:aws:s3:::${ssm:DESTINATION_BUCKET}/*
   environment:
     SOURCE_BUCKET: ${ssm:SOURCE_BUCKET}
     DESTINATION_BUCKET: ${ssm:DESTINATION_BUCKET}
