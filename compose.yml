@@ -1,0 +1,17 @@
+version: "3"
+services:
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - 4566:4566
+      - 8000:8080 # dashboard
+    environment:
+      - SERVICES=s3
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # /etc/localstack/init/ にあるファイルはコンテナ起動時に実行される
+      # ready.d にあるファイルはLocalStack がリクエストを受け取る準備ができた状態になったら実行される
+      # https://docs.localstack.cloud/references/init-hooks/
+      - ./create_buckets.sh:/etc/localstack/init/ready.d/create_buckets.sh
+    command: ["sh", "-c", "./docker-entrypoint-initaws.d/create_buckets.sh"]
