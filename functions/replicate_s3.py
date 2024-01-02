@@ -1,8 +1,23 @@
 import boto3
 import re
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 s3_client = boto3.client('s3')
+if os.environ['STAGE'] == 'test':
+    # LocalStackのホストとポートを指定
+    localstack_url = 'http://localhost:4566'
+
+    # S3クライアントの設定
+    s3_client = boto3.client(
+        's3',
+        region_name='ap-northeast-1',  # LocalStackではリージョンは任意ですが、指定する必要があります
+        endpoint_url=localstack_url,
+        aws_access_key_id='test',  # LocalStackでは任意の値でOK
+        aws_secret_access_key='test'  # LocalStackでは任意の値でOK
+    )
 
 
 def lambda_handler(event, context):
@@ -14,18 +29,27 @@ def lambda_handler(event, context):
     # 送信先バケットの既存ファイルを取得
     existing_files = set()
     resp = s3_client.list_objects_v2(
-        Bucket=destination_bucket, Prefix=destination_prefix)
+        Bucket=destination_bucket,
+        Prefix=destination_prefix)
+
     if 'Contents' in resp:
         for obj in resp['Contents']:
             existing_files.add(obj['Key'])
 
+    # 送信元フォルダをループ
     for prefix in source_prefixes:
-        # 送信元S3バケットのファイル一覧を取得
+        # 送信元フォルダのファイル一覧を取得
         response = s3_client.list_objects_v2(
-            Bucket=source_bucket, Prefix=prefix)
+            Bucket=source_bucket,
+            Prefix=prefix)
         if 'Contents' in response:
+            # 送信元フォルダのファイル一覧をループ
             for item in response['Contents']:
                 file_name = item['Key']
+
+                # フォルダの場合はスキップ
+                if file_name == prefix:
+                    continue
 
                 # ファイル名から年月を抽出（任意のプレフィックスを許容）
                 match = re.search(r'(.+)_(\d{4})(\d{2})\d{2}\.csv', file_name)
