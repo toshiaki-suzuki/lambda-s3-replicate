@@ -8,11 +8,13 @@ jobs:
   localstack_test:
     runs-on: ubuntu-latest
 
-    services:
-      localstack:
-        image: localstack/localstack
-        ports:
-          - "4566:4566"
+    env:
+      STAGE: test
+      SOURCE_BUCKET: source-bucket
+      DESTINATION_BUCKET: destination-bucket
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
 
     steps:
     - name: Checkout Repository
@@ -22,6 +24,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.11'
+    
+    - name: Install AWS CLI
+      run: |
+        pip install awscli
 
     - name: Install pipenv
       run: |
@@ -31,9 +37,20 @@ jobs:
       run: |
         pipenv install --dev
 
+    - name: Excecute Permission Script
+      run: |
+        chmod +x create_buckets.sh
+
     - name: Start LocalStack
       run: |
         docker compose up -d
+
+    - name: Wait for LocalStack to be ready
+      run: |
+        until $(curl --output /dev/null --silent --head --fail http://localhost:4566/health); do
+          printf '.'
+          sleep 5
+        done
 
     - name: Run tests with pytest
       run: |
