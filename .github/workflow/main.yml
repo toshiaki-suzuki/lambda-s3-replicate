@@ -1,0 +1,40 @@
+name: LocalStack S3 Data Replication Test
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  localstack_test:
+    runs-on: ubuntu-latest
+
+    services:
+      localstack:
+        image: localstack/localstack
+        ports:
+          - "4566:4566"
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.11'
+
+    - name: Install pipenv
+      run: |
+        pip install pipenv
+
+    - name: Install dependencies with pipenv
+      run: |
+        pipenv install --dev
+
+    - name: Start LocalStack
+      run: |
+        docker compose up -d
+
+    - name: Run tests with pytest
+      run: |
+        pipenv run pytest
