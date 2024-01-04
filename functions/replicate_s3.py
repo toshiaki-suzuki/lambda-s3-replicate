@@ -5,22 +5,22 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-s3_client = boto3.client('s3')
-if os.environ['STAGE'] == 'test':
-    # LocalStackのホストとポートを指定
-    localstack_url = 'http://localhost:4566'
-
-    # S3クライアントの設定
-    s3_client = boto3.client(
-        's3',
-        region_name='ap-northeast-1',  # LocalStackではリージョンは任意ですが、指定する必要があります
-        endpoint_url=localstack_url,
-        aws_access_key_id='test',  # LocalStackでは任意の値でOK
-        aws_secret_access_key='test'  # LocalStackでは任意の値でOK
-    )
-
 
 def lambda_handler(event, context):
+    s3_client = boto3.client('s3')
+    if os.environ['STAGE'] == 'test':
+        # LocalStackのホストとポートを指定
+        localstack_url = 'http://localhost:4566'
+
+        # S3クライアントの設定
+        s3_client = boto3.client(
+            's3',
+            region_name='ap-northeast-1',  # LocalStackではリージョンは任意ですが、指定する必要があります
+            endpoint_url=localstack_url,
+            aws_access_key_id='test',  # LocalStackでは任意の値でOK
+            aws_secret_access_key='test'  # LocalStackでは任意の値でOK
+        )
+
     source_bucket = os.environ['SOURCE_BUCKET']  # 送信元のS3バケット名
     destination_bucket = os.environ['DESTINATION_BUCKET']  # 送信先のS3バケット名
     source_prefixes = ['source-folder1/', 'source-folder2/']  # 送信元の複数のフォルダ
