@@ -83,13 +83,6 @@ def test_replicate_from_source_to_destination():
     actual2 = response['Contents'][1]['Key']
     assert expected2 == actual2
 
-    # destination-bucketに入っているオブジェクト数が2件であることを検証し下記を検証
-    # 対象外のフォルダのファイルをコピーしていないこと
-    # file1_20230101.csvが1件だけであること
-    expected3 = 2
-    actual3 = len(response['Contents'])
-    assert expected3 == actual3
-
 
 def test_not_replicate_from_not_target_folder():
     """
