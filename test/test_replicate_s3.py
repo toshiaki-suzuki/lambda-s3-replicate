@@ -113,3 +113,33 @@ def test_not_replicate_from_not_target_folder():
     # 対象外のフォルダのファイルをコピーしていないこと
     # file1_20230101.csvが1件だけであること
     assert response['KeyCount'] == 0
+
+
+def test_replicate_only_difference(mocker):
+    """
+    送信元バケットから送信先バケットにオブジェクトの複製ができていることをテスト
+    """
+
+    # 対象外のフォルダにコピー対象データを投入
+    s3_client.put_object(Bucket=source_bucket,
+                         Key='source-folder1/file1_20230101.csv',
+                         Body='file1_20230101.csv')
+    s3_client.put_object(Bucket=destination_bucket,
+                         Key='destination-folder/2023/01/file1_20230101.csv',
+                         Body='file1_20230101.csv')
+
+    mock_s3_client = boto3.client(
+        's3',
+        region_name='us-east-1',  # LocalStackではリージョンは任意ですが、指定する必要があります
+        endpoint_url=localstack_url,
+        aws_access_key_id='test',  # LocalStackでは任意の値でOK
+        aws_secret_access_key='test'  # LocalStackでは任意の値でOK
+    )
+    mock_s3_client.copy_object = mocker.Mock()
+    mocker.patch('boto3.client', return_value=mock_s3_client)
+
+    # Lambda関数の実行
+    lambda_handler(None, None)
+
+    # テスト検証
+    mock_s3_client.copy_object.assert_not_called()
