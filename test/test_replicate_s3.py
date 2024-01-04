@@ -47,12 +47,6 @@ class TestLambdaHandler:
         送信元バケットから送信先バケットにオブジェクトの複製ができていることをテスト
         """
 
-        s3_client = boto3.client(
-            's3',
-            region_name='us-east-1',  # LocalStackではリージョンは任意ですが、指定する必要があります
-            endpoint_url=localstack_url
-        )
-
         # source-folder1にコピー対象データを投入
         s3_client.put_object(Bucket=source_bucket,
                              Key='source-folder1/file1_20230101.csv',
