@@ -41,7 +41,7 @@ def setup():
                 Bucket=destination_bucket, Key=obj['Key'])
 
 
-def test_replication_from_source_to_destination():
+def test_replicate_from_source_to_destination():
     """
     送信元バケットから送信先バケットにオブジェクトの複製ができていることをテスト
     """
@@ -89,3 +89,27 @@ def test_replication_from_source_to_destination():
     expected3 = 2
     actual3 = len(response['Contents'])
     assert expected3 == actual3
+
+
+def test_not_replicate_from_not_target_folder():
+    """
+    対象フォルダ以外からオブジェクトの複製がしないことをテスト
+    """
+
+    # 対象外のフォルダにコピー対象データを投入
+    s3_client.put_object(Bucket=source_bucket,
+                         Key='dummy/file1_20230101.csv',
+                         Body='file1_20230101.csv')
+
+    # Lambda関数の実行
+    lambda_handler(None, None)
+
+    # テスト検証
+    response = s3_client.list_objects_v2(
+        Bucket=destination_bucket,
+        Prefix='destination-folder/')
+
+    # destination-bucketに入っているオブジェクト数が2件であることを検証し下記を検証
+    # 対象外のフォルダのファイルをコピーしていないこと
+    # file1_20230101.csvが1件だけであること
+    assert response['KeyCount'] == 0
