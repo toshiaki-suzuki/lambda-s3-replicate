@@ -43,7 +43,7 @@ jobs:
 
     - name: Start LocalStack
       run: |
-        docker compose up
+        docker compose up -d
 
     - name: Wait for LocalStack to be ready
       run: |
