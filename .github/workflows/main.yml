@@ -45,12 +45,12 @@ jobs:
       run: |
         docker compose up -d
 
-    - name: Wait for LocalStack to be ready
-      run: |
-        until $(curl --output /dev/null --silent --head --fail http://localhost:4566/health); do
-          printf '.'
-          sleep 5
-        done
+    # - name: Wait for LocalStack to be ready
+    #   run: |
+    #     until $(curl --output /dev/null --silent --head --fail http://localhost:4566/health); do
+    #       printf '.'
+    #       sleep 5
+    #     done
 
     - name: Run tests with pytest
       run: |
