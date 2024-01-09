@@ -1,7 +1,7 @@
 name: LocalStack S3 Data Replication Test
 
 on:
-  push:
+  pull_request:
     branches: [ "main" ]
 
 jobs:
