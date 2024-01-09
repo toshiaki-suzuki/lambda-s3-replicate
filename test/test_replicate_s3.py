@@ -3,6 +3,10 @@ import pytest
 import os
 from functions.replicate_s3 import lambda_handler
 
+os.environ['STAGE'] = 'test'
+os.environ['SOURCE_BUCKET'] = 'source-bucket'
+os.environ['DESTINATION_BUCKET'] = 'destination-bucket'
+
 localstack_url = 'http://localhost:4566'
 
 # S3クライアントの設定
