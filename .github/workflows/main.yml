@@ -47,7 +47,7 @@ jobs:
 
     - name: Wait for LocalStack to be ready
       run: |
-        until $(curl --output /dev/null --silent --head --fail http://localhost:4566/health); do
+        until $(curl --head --fail http://localhost:4566/health); do
           printf '.'
           sleep 5
         done
