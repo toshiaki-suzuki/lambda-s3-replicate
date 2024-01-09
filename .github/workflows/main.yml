@@ -49,6 +49,7 @@ jobs:
       run: |
         until $(curl --head --fail http://localhost:4566/health); do
           printf '.'
+          docker ps
           sleep 5
         done
 
