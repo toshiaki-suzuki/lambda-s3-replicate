@@ -1,0 +1,12 @@
+{
+    "[python]": {
+        "editor.formatOnType": true,
+        "editor.defaultFormatter": "ms-python.autopep8",
+        "editor.formatOnSave": true
+      },
+      "flake8.args": [
+        "--ignore=E501, W293, W504",
+        "--max-line-length=80",
+        "--max-complexity=20"
+      ],
+}
