@@ -28,42 +28,40 @@ def lambda_handler(event, context):
 
     # 送信先バケットの既存ファイルを取得
     existing_files = set()
-    resp = s3_client.list_objects_v2(
-        Bucket=destination_bucket,
-        Prefix=destination_prefix)
+    pagenator = s3_client.get_paginator('list_objects_v2')
 
-    if 'Contents' in resp:
-        for obj in resp['Contents']:
-            existing_files.add(obj['Key'])
+    # ページネーションで全件取得
+    for page in pagenator.paginate(Bucket=destination_bucket, Prefix=destination_prefix):
+        if 'Contents' in page:
+            for obj in page['Contents']:
+                existing_files.add(obj['Key'])
 
     # 送信元フォルダをループ
     for prefix in source_prefixes:
         # 送信元フォルダのファイル一覧を取得
-        response = s3_client.list_objects_v2(
-            Bucket=source_bucket,
-            Prefix=prefix)
-        if 'Contents' in response:
-            # 送信元フォルダのファイル一覧をループ
-            for item in response['Contents']:
-                file_name = item['Key']
+        for page in pagenator.paginate(Bucket=source_bucket, Prefix=prefix):
+            if 'Contents' in page:
+                for item in page['Contents']:
+                    file_name = item['Key']
 
-                # フォルダの場合はスキップ
-                if file_name == prefix:
-                    continue
+                    # フォルダの場合はスキップ
+                    if file_name == prefix:
+                        continue
 
-                # ファイル名から年月を抽出（任意のプレフィックスを許容）
-                match = re.search(r'(.+)_(\d{4})(\d{2})\d{2}\.csv', file_name)
-                if match:
-                    _, year, month = match.groups()
-                    # 送信先のパスを設定
-                    destination_path = f'{destination_prefix}{year}/{month}/{file_name.split("/")[-1]}'
+                    # ファイル名から年月を抽出（任意のプレフィックスを許容）
+                    match = re.search(
+                        r'(.+)_(\d{4})(\d{2})\d{2}\.csv', file_name)
+                    if match:
+                        _, year, month = match.groups()
+                        # 送信先のパスを設定
+                        destination_path = f'{destination_prefix}{year}/{month}/{file_name.split("/")[-1]}'
 
-                    # 差分データのみコピー
-                    if destination_path not in existing_files:
-                        s3_client.copy_object(Bucket=destination_bucket,
-                                              CopySource={
-                                                  'Bucket': source_bucket, 'Key': file_name},
-                                              Key=destination_path)
+                        # 差分データのみコピー
+                        if destination_path not in existing_files:
+                            s3_client.copy_object(Bucket=destination_bucket,
+                                                  CopySource={
+                                                      'Bucket': source_bucket, 'Key': file_name},
+                                                  Key=destination_path)
 
     return {
         'statusCode': 200,
