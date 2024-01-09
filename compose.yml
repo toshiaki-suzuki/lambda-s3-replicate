@@ -4,7 +4,6 @@ services:
     image: localstack/localstack:latest
     ports:
       - 4566:4566
-      - 8000:8080 # dashboard
     environment:
       - SERVICES=s3
       - DOCKER_HOST=unix:///var/run/docker.sock

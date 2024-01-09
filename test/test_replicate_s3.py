@@ -140,3 +140,32 @@ def test_replicate_only_difference(mocker):
 
     # テスト検証
     mock_s3_client.copy_object.assert_not_called()
+
+
+def test_replicate_more_than_1000_files(mocker):
+    """
+    送信元バケットから送信先バケットにオブジェクトの複製ができていることをテスト
+    """
+
+    # 対象外のフォルダにコピー対象データを投入
+    for i in range(1001):
+        year = 1000 + i
+        s3_client.put_object(Bucket=source_bucket,
+                             Key=f'source-folder1/file1_{year}0101.csv')
+
+    # Lambda関数の実行
+    lambda_handler(None, None)
+
+    # テスト検証
+    # 1001件のコピーが実行されていること
+    pagenator = s3_client.get_paginator('list_objects_v2')
+    response = pagenator.paginate(
+        Bucket=destination_bucket, Prefix='destination-folder/')
+
+    count = 0
+    for page in response:
+        if 'Contents' in page:
+            for obj in page['Contents']:
+                count += 1
+
+    assert count == 1001
