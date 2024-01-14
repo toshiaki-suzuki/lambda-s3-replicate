@@ -24,10 +24,6 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    
-    - name: Install AWS CLI
-      run: |
-        pip install awscli
 
     - name: Install pipenv
       run: |
@@ -47,7 +43,18 @@ jobs:
 
     - name: Wait for LocalStack to be ready
       run: |
-        sleep 60
+        timeout=180
+        elapsed=0
+        container_id=$(docker ps --format "{{.ID}}")
+        echo "Waiting for container $container_id to be healthy..."
+        while [ "$(docker inspect --format='{{.State.Health.Status}}' $container_id)" != "healthy" ]; do 
+          if [ $elapsed -ge $timeout ]; then
+            echo "Timeout waiting for container $container_id to become healthy."
+            exit 1
+          fi
+          sleep 5
+          elapsed=$((elapsed + 5))
+        done
 
     - name: Run tests with pytest
       run: |
