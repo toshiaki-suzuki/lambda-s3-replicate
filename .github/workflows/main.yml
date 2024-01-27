@@ -72,4 +72,4 @@ jobs:
 
     - name: deploy
       run: |
-        sls deploy --stage $STAGE
+        serverless deploy
