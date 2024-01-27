@@ -15,21 +15,23 @@ provider:
   runtime: python3.11
   stage: ${opt:stage, self:custom.defaultStage}
   region: ap-northeast-1
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - s3:ListBucket
-      Resource:
-        - arn:aws:s3:::${ssm:SOURCE_BUCKET}
-        - arn:aws:s3:::${ssm:DESTINATION_BUCKET}
-    - Effect: Allow
-      Action:
-        - s3:GetObject
-        - s3:PutObject
-        - s3:DeleteObject
-      Resource:
-        - arn:aws:s3:::${ssm:SOURCE_BUCKET}/*
-        - arn:aws:s3:::${ssm:DESTINATION_BUCKET}/*
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+          Resource:
+            - arn:aws:s3:::${ssm:SOURCE_BUCKET}
+            - arn:aws:s3:::${ssm:DESTINATION_BUCKET}
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+            - s3:DeleteObject
+          Resource:
+            - arn:aws:s3:::${ssm:SOURCE_BUCKET}/*
+            - arn:aws:s3:::${ssm:DESTINATION_BUCKET}/*
   environment:
     STAGE: ${self:provider.stage}
     SOURCE_BUCKET: ${ssm:SOURCE_BUCKET}
