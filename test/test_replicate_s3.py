@@ -6,6 +6,9 @@ from functions.replicate_s3 import lambda_handler
 os.environ['STAGE'] = 'test'
 os.environ['SOURCE_BUCKET'] = 'source-bucket'
 os.environ['DESTINATION_BUCKET'] = 'destination-bucket'
+os.environ['AWS_ACCESS_KEY_ID'] = 'test'
+os.environ['AWS_SECRET_ACCESS_KEY'] = 'test'
+os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
 
 localstack_url = 'http://localhost:4566'
 
