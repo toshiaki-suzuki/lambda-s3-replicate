@@ -71,6 +71,8 @@ jobs:
         npm ci
         npm ls
 
-    - name: deploy
-      run: |
-        serverless deploy
+    - name: serverless deploy
+      uses: serverless/github-action@v3
+      with:
+        args: -c "serverless deploy"
+        entrypoint: /bin/sh
