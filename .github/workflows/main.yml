@@ -72,7 +72,7 @@ jobs:
         npm ls
 
     - name: serverless deploy
-      uses: serverless/github-action@v3
+      uses: serverless/github-action@v3.2
       with:
-        args: -c "serverless deploy"
+        args: -c "serverless plugin install --name serverless-python-requirements && serverless deploy"
         entrypoint: /bin/sh
