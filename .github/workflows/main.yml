@@ -7,9 +7,6 @@ on:
 jobs:
   localstack_test:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
     - name: Checkout Repository
@@ -54,24 +51,3 @@ jobs:
     - name: Run tests with pytest
       run: |
         pipenv run pytest
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
-        aws-region: ap-northeast-1
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Install dependencies
-      run: |
-        npm ci
-        npm ls
-
-    - name: serverless deploy
-      run: |
-        npx serverless plugin install --name serverless-python-requirements
-        npx serverless deploy
