@@ -33,6 +33,19 @@ jobs:
           npm ci
           npm ls
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+    
+      - name: Install pipenv
+        run: |
+          pip install pipenv
+  
+      - name: Install dependencies with pipenv
+        run: |
+          pipenv install --dev
+
       - name: serverless deploy
         run: |
           npx serverless plugin install --name serverless-python-requirements
