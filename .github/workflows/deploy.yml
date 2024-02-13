@@ -1,9 +1,9 @@
 name: Serverless Framework Deploy
 
 on:
-  pull_request:
+  push:
     branches: [ "main" ]
-    types: [closed]
+    # types: [closed]
 
 jobs:
   sls_deploy:
@@ -48,7 +48,6 @@ jobs:
 
       - name: serverless deploy
         run: |
-          npx serverless plugin install --name serverless-python-requirements
           npx serverless deploy
 
       - name: Send GitHub Action trigger data to Slack workflow
