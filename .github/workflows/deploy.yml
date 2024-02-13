@@ -1,9 +1,9 @@
 name: Serverless Framework Deploy
 
 on:
-  push:
+  pull_request:
     branches: [ "main" ]
-    # types: [closed]
+    types: [closed]
 
 jobs:
   sls_deploy:
