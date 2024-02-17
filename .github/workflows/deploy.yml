@@ -2,12 +2,15 @@ name: Serverless Framework Deploy
 
 on:
   pull_request:
-    branches: [ "main" ]
-    types: [closed]
+    branches: 
+      - "main"
+    types:
+      - closed
 
 jobs:
   sls_deploy:
       runs-on: ubuntu-latest
+      if: github.event.pull_request.merged == false
       permissions:
         id-token: write
         contents: read
