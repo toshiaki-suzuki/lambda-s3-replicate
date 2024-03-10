@@ -1,4 +1,4 @@
-from Replicater import Replicater
+from .Replicater import Replicater
 # from dotenv import load_dotenv
 
 # import boto3
