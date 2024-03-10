@@ -3,7 +3,7 @@ service: replicate-s3
 frameworkVersion: '3'
 
 custom:
-  defaultStage: dev 
+  defaultStage: dev
   pythonRequirements:
     usePipenv: true
 
@@ -44,9 +44,12 @@ package:
     - functions/**
 
 functions:
-  replicate_s3:
-    name: replicate-s3-${self:provider.stage}
+  replicateS3:
+    name: replicate-s3
     handler: functions.replicate_s3.lambda_handler
+  replicateS3V2:
+    name: replicate-s3-v2
+    handler: functions.replicate_s3_v2.lambda_handler
 
 resources:
   - ${file(resources/s3.yml)}
